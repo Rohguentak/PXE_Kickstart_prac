@@ -65,8 +65,8 @@
               inet6 fe80::e94a:c781:2840:a4b/64 scope link noprefixroute 
           valid_lft forever preferred_lft forever
           3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
-          link/ether 08:00:27:77:ea:af brd ff:ff:ff:ff:ff:ff
-              inet 172.28.128.10/24 brd 172.28.128.255 scope global noprefixroute enp0s8
+          link/ether 08:00:27:77:ea:af brd ff:ff:ff:ff:ff:ff       
+              inet 172.28.128.10/24 brd 172.28.128.255 scope global noprefixroute enp0s8      //ip주소 부여된 
           valid_lft forever preferred_lft forever
               inet6 fe80::9f16:5a10:11ff:589b/64 scope link noprefixroute 
           valid_lft forever preferred_lft forever
@@ -100,21 +100,25 @@
           # mkdir /tftpboot/ks
           # mkdir /tftpboot/pxelinux.cfg
           # vi /tftpboot/pxelinux.cfg/default
-          default menu.c32
-          timeout 100
+          	default menu.c32
+          	timeout 100
 
-          menu title ### OS Installer Boot Menu ###		//부팅 메뉴 설정하는것 
+          	menu title ### OS Installer Boot Menu ###		//부팅 메뉴 설정하는것 
 
-          LABEL CentOS7
+          	LABEL CentOS7
 	            kernel CentOS7/vmlinuz			//커널 바이너리 압축한것
 	            append ksdevice=link load_ramdisk=1 initrd=CentOS7/initrd.img unsupported_hardware text network ks=nfs:172.28.128.10:/tftpboot/ks/ks.cfg text //nfs 로 공유된 iso 받아오기 위함 ip주소는 pxe서버의 주소, 패키지 저장 경로
-          # wget http://mirror.navercorp.com/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-2003.iso  //iso 파일 다운로드
+          
+	  # wget http://mirror.navercorp.com/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-2003.iso  //iso 파일 다운로드
 	  # mkdir /media/iso
 	  # mount -o loop /home/roh/CentOS-7-x86_64-Minimal-2003.iso /media/iso/			//iso파일 마운트
 	  mount: /dev/loop0 is write-protected, mounting read-only
 	  # cp /media/iso/isolinux/vmlinuz /tftpboot/CentOS7/	
 	  # cp /media/iso/isolinux/initrd.img /tftpboot/CentOS7/
 	  # cp /root/anaconda-ks.cfg /tftpboot/ks/ks.cfg
+
+#kickstart 파일 설정
+--------------------
 	  # vi /tftpboot/ks/ks.cfg 								//kickstart파일 설정
 		#version=DEVEL
 		# System authorization information
@@ -169,30 +173,9 @@
 		pwpolicy luks --minlen=6 --minquality=1 --notstrict --nochanges --notempty
 		%end
 		
-	# chmod -R 777 /tftpboot/
-	# systemctl stop firewalld
-	# systemctl disable firewalld		//방화벽과 selinux 비활성화
-	Removed symlink /etc/systemd/system/multi-user.target.wants/firewalld.service.
-	Removed symlink /etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service.
-	# vi /etc/sysconfig/selinux 
-		# This file controls the state of SELinux on the system.
-		# SELINUX= can take one of these three values:
-		#     enforcing - SELinux security policy is enforced.
-		#     permissive - SELinux prints warnings instead of enforcing.
-		#     disabled - No SELinux policy is loaded.
-		SELINUX=disabled
-		# SELINUXTYPE= can take one of three values:
-		#     targeted - Targeted processes are protected,
-		#     minimum - Modification of targeted policy. Only selected processes are protected. 
-		#     mls - Multi Level Security protection.
-		SELINUXTYPE=targeted 
-		
+#dhcp 설정
+----------
 	# vi /etc/dhcp/dhcpd.conf //client에 주소를 부여학위한 dhcp 설정 
-		#
-		# DHCP Server Configuration file.
-		#   see /usr/share/doc/dhcp*/dhcpd.conf.example
-		#   see dhcpd.conf(5) man page
-		#
 		allow booting;		
 		allow bootp;
 		default-lease-time 600;
@@ -205,12 +188,25 @@
 		option routers 172.28.128.1;
 		range 172.28.128.11 172.28.128.20;
 		}
+		
+#pxe를 위한 service 실행
+------------------------
 	# mkdir /media/iso	
 	# cp -r /media/iso/* /iso      //마운트한 iso 파일 복사
-	# vi /etc/exports
-	# cat /etc/exports		//nfs에 마운트하기위함
-	/tftpboot/ks *(ro)
-	/iso *(ro)
+	# vi /etc/exports		//nfs에 마운트하기위함
+		/tftpboot/ks *(ro)
+		/iso *(ro)
+	
+	# chmod -R 777 /tftpboot/
+	# systemctl stop firewalld
+	# systemctl disable firewalld		//방화벽과 selinux 비활성화
+		Removed symlink /etc/systemd/system/multi-user.target.wants/firewalld.service.
+		Removed symlink /etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service.
+		
+	# vi /etc/sysconfig/selinux 
+		SELINUX=disabled
+		SELINUXTYPE=targeted 
+		
 	# systemctl restart dhcpd
 	# systemctl restart nfs
 	# systemctl restart xinetd
@@ -220,3 +216,7 @@
 		
 			
 #client는 네트워크로 부팅되도록 설정 하면 os 설치됨
+--------------------------------------------------
+	#네트워크는 host-only만 사용
+	#부팅순서 network를 최우선으로 설정
+	#가상 HDD 크기 충분히!! 부족할경우 

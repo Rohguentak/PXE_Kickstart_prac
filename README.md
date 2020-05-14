@@ -105,4 +105,110 @@
 	            kernel CentOS7/vmlinuz
 	            append ksdevice=link load_ramdisk=1 initrd=CentOS7/initrd.img unsupported_hardware text network ks=nfs:172.28.128.10:/tftpboot/ks/ks.cfg text
           #wget http://mirror.navercorp.com/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-2003.iso  //iso 파일 
+	  # mkdir /media/iso
+	  # mount -o loop /home/roh/CentOS-7-x86_64-Minimal-2003.iso /media/iso/
+	  mount: /dev/loop0 is write-protected, mounting read-only
+	  # cp /media/iso/isolinux/vmlinuz /tftpboot/CentOS7/
+	  # cp /media/iso/isolinux/initrd.img /tftpboot/CentOS7/
+	  # cp /root/anaconda-ks.cfg /tftpboot/ks/ks.cfg
+	  # vi /tftpboot/ks/ks.cfg 
+		#version=DEVEL
+		# System authorization information
+		auth --enableshadow --passalgo=sha512
+		# Use CDROM installation media
+		install
+		# Use graphical install
+		text
 
+		nfs --server=172.28.128.10 --dir="/iso"
+		# Run the Setup Agent on first boot
+		firstboot --enable
+		ignoredisk --only-use=sda
+		# Keyboard layouts
+		keyboard --vckeymap=kr --xlayouts='kr','us'
+		# System language
+		lang ko_KR.UTF-8
+
+		# Network information
+		network  --bootproto=dhcp --device=enp0s3 --ipv6=auto --activate
+		network  --bootproto=dhcp --device=enp0s8 --onboot=on --ipv6=auto
+		network  --hostname=localhost.localdomain
+
+		# Root password
+		rootpw --iscrypted $6$k/U0AP/NPLjFvAs2$vTkY92fFB0/.PbuqbsjJlYyL3bPASiOKlkktXEW8kqZCHnIGUmq89w0a8oSrNGRX.3QNxUBiAzrP.z8pIKzWb0
+		# System services
+		services --enabled="chronyd"
+		# System timezone
+		timezone Asia/Seoul --isUtc
+		user --groups=wheel --name=roh --				password=$6$dubHTrc/vCo1zgLG$o3leCuSjV2OG98uoZa6us.4MmKj3hcAMZx4qkhR7CNfrftfepB5X5VmQ.vwWpjf3Cc3u2xv5r..NzPdpuYEjf. --iscrypted --gecos="roh"
+		# System bootloader configuration
+		bootloader --append=" crashkernel=auto" --location=mbr --boot-drive=sda
+		autopart --type=lvm
+		# Partition clearing information
+		clearpart --none --initlabel
+
+		%packages
+		@^minimal
+		@core
+		chrony
+		kexec-tools
+
+		%end
+
+		%addon com_redhat_kdump --enable --reserve-mb='auto'
+
+		%end
+
+		%anaconda
+		pwpolicy root --minlen=6 --minquality=1 --notstrict --nochanges --notempty
+		pwpolicy user --minlen=6 --minquality=1 --notstrict --nochanges --emptyok
+		pwpolicy luks --minlen=6 --minquality=1 --notstrict --nochanges --notempty
+		%end
+		# chmod -R 777 /tftpboot/
+		# systemctl stop firewalld
+		# systemctl disable firewalld
+		Removed symlink /etc/systemd/system/multi-user.target.wants/firewalld.service.
+		Removed symlink /etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service.
+		# vi /etc/sysconfig/selinux 
+			# This file controls the state of SELinux on the system.
+			# SELINUX= can take one of these three values:
+			#     enforcing - SELinux security policy is enforced.
+			#     permissive - SELinux prints warnings instead of enforcing.
+			#     disabled - No SELinux policy is loaded.
+			SELINUX=disabled
+			# SELINUXTYPE= can take one of three values:
+			#     targeted - Targeted processes are protected,
+			#     minimum - Modification of targeted policy. Only selected processes are protected. 
+			#     mls - Multi Level Security protection.
+			SELINUXTYPE=targeted 
+		# vi /etc/dhcp/dhcpd.conf 
+			#
+			# DHCP Server Configuration file.
+			#   see /usr/share/doc/dhcp*/dhcpd.conf.example
+			#   see dhcpd.conf(5) man page
+			#
+			allow booting;		
+			allow bootp;
+			default-lease-time 600;
+			max-lease-time 7200;
+			option domain-name-servers 192.168.21.1;
+			ddns-update-style none;
+			next-server 172.28.128.10;
+			filename "pxelinux.0";
+			# cp -r /media/iso/* /iso
+			# vi /etc/exports
+			# cat /etc/exports
+			/tftpboot/ks *(ro)
+			/iso *(ro)
+			# systemctl restart dhcpd
+			# systemctl restart nfs
+			# systemctl restart xinetd
+			# systemctl restart tftp
+
+
+			subnet 172.28.128.0 netmask 255.255.255.0 {
+			        option routers 172.28.128.1;
+			        range 172.28.128.11 172.28.128.20;
+			}
+			
+#client는 네트워크로 부팅되도록 설정 하면 os 설치됨

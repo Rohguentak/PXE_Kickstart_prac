@@ -93,7 +93,7 @@
 		          per_source		= 11
 		          cps			= 100 2
 			  flags			= IPv4
-    	        }
+    	       }
           # mkdir /tftpboot
           # cp /usr/share/syslinux/menu.c32 /tftpboot/              //부팅메뉴 꾸미는 파일
           # cp /usr/share/syslinux/pxelinux.0 /tftpboot/	    //네트워크 부트로더

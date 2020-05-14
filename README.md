@@ -104,7 +104,7 @@
           LABEL CentOS7
 	            kernel CentOS7/vmlinuz
 	            append ksdevice=link load_ramdisk=1 initrd=CentOS7/initrd.img unsupported_hardware text network ks=nfs:172.28.128.10:/tftpboot/ks/ks.cfg text
-          #wget http://mirror.navercorp.com/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-2003.iso  //iso 파일 
+          # wget http://mirror.navercorp.com/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-2003.iso  //iso 파일 
 	  # mkdir /media/iso
 	  # mount -o loop /home/roh/CentOS-7-x86_64-Minimal-2003.iso /media/iso/
 	  mount: /dev/loop0 is write-protected, mounting read-only
@@ -164,51 +164,52 @@
 		pwpolicy user --minlen=6 --minquality=1 --notstrict --nochanges --emptyok
 		pwpolicy luks --minlen=6 --minquality=1 --notstrict --nochanges --notempty
 		%end
-		# chmod -R 777 /tftpboot/
-		# systemctl stop firewalld
-		# systemctl disable firewalld
-		Removed symlink /etc/systemd/system/multi-user.target.wants/firewalld.service.
-		Removed symlink /etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service.
-		# vi /etc/sysconfig/selinux 
-			# This file controls the state of SELinux on the system.
-			# SELINUX= can take one of these three values:
-			#     enforcing - SELinux security policy is enforced.
-			#     permissive - SELinux prints warnings instead of enforcing.
-			#     disabled - No SELinux policy is loaded.
-			SELINUX=disabled
-			# SELINUXTYPE= can take one of three values:
-			#     targeted - Targeted processes are protected,
-			#     minimum - Modification of targeted policy. Only selected processes are protected. 
-			#     mls - Multi Level Security protection.
-			SELINUXTYPE=targeted 
-		# vi /etc/dhcp/dhcpd.conf 
-			#
-			# DHCP Server Configuration file.
-			#   see /usr/share/doc/dhcp*/dhcpd.conf.example
-			#   see dhcpd.conf(5) man page
-			#
-			allow booting;		
-			allow bootp;
-			default-lease-time 600;
-			max-lease-time 7200;
-			option domain-name-servers 192.168.21.1;
-			ddns-update-style none;
-			next-server 172.28.128.10;
-			filename "pxelinux.0";
-			# cp -r /media/iso/* /iso
-			# vi /etc/exports
-			# cat /etc/exports
-			/tftpboot/ks *(ro)
-			/iso *(ro)
-			# systemctl restart dhcpd
-			# systemctl restart nfs
-			# systemctl restart xinetd
-			# systemctl restart tftp
+	# chmod -R 777 /tftpboot/
+	# systemctl stop firewalld
+	# systemctl disable firewalld
+	Removed symlink /etc/systemd/system/multi-user.target.wants/firewalld.service.
+	Removed symlink /etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service.
+	# vi /etc/sysconfig/selinux 
+		# This file controls the state of SELinux on the system.
+		# SELINUX= can take one of these three values:
+		#     enforcing - SELinux security policy is enforced.
+		#     permissive - SELinux prints warnings instead of enforcing.
+		#     disabled - No SELinux policy is loaded.
+		SELINUX=disabled
+		# SELINUXTYPE= can take one of three values:
+		#     targeted - Targeted processes are protected,
+		#     minimum - Modification of targeted policy. Only selected processes are protected. 
+		#     mls - Multi Level Security protection.
+		SELINUXTYPE=targeted 
+	# vi /etc/dhcp/dhcpd.conf 
+		#
+		# DHCP Server Configuration file.
+		#   see /usr/share/doc/dhcp*/dhcpd.conf.example
+		#   see dhcpd.conf(5) man page
+		#
+		allow booting;		
+		allow bootp;
+		default-lease-time 600;
+		max-lease-time 7200;
+		option domain-name-servers 192.168.21.1;
+		ddns-update-style none;
+		next-server 172.28.128.10;
+		filename "pxelinux.0";
+		subnet 172.28.128.0 netmask 255.255.255.0 {
+		option routers 172.28.128.1;
+		range 172.28.128.11 172.28.128.20;
+		}
+	# cp -r /media/iso/* /iso
+	# vi /etc/exports
+	# cat /etc/exports
+	/tftpboot/ks *(ro)
+	/iso *(ro)
+	# systemctl restart dhcpd
+	# systemctl restart nfs
+	# systemctl restart xinetd
+	# systemctl restart tftp
 
 
-			subnet 172.28.128.0 netmask 255.255.255.0 {
-			        option routers 172.28.128.1;
-			        range 172.28.128.11 172.28.128.20;
-			}
+		
 			
 #client는 네트워크로 부팅되도록 설정 하면 os 설치됨

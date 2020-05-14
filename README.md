@@ -18,58 +18,59 @@
           #reboot
 	  
           #ip addr show
-          1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
-              link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
-              inet 127.0.0.1/8 scope host lo
-                 valid_lft forever preferred_lft forever
-              inet :: 1/128 scope host
-                 valid_lft forever preferred_lft forever
-          2: enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
-              link/ether 08:00:27:34:88:e2 brd ff:ff:ff:ff:ff:ff
-              inet 10.0.2.15/24 brd 10.0.2.255 scope global noprefixroute dynamic enp0s3
-                 valid_lft forever preferred_lft 86058sec
-              inet fe80::e94a:c781:2840:a4b/64 scope link noprefixroute
-                 valid_lft forever preferred_lft forever
-          3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
-              link/ether 08:00:27:77:ea:af brd ff:ff:ff:ff:ff:ff
+          	1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+              		link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+              		inet 127.0.0.1/8 scope host lo
+                 		valid_lft forever preferred_lft forever
+              		inet :: 1/128 scope host
+                 		valid_lft forever preferred_lft forever
+          	2: enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+              		link/ether 08:00:27:34:88:e2 brd ff:ff:ff:ff:ff:ff
+              		inet 10.0.2.15/24 brd 10.0.2.255 scope global noprefixroute dynamic enp0s3
+                 		valid_lft forever preferred_lft 86058sec
+              		inet fe80::e94a:c781:2840:a4b/64 scope link noprefixroute
+                 		valid_lft forever preferred_lft forever
+          	3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+              		link/ether 08:00:27:77:ea:af brd ff:ff:ff:ff:ff:ff
           #vi /etc/sysconfig/network-scripts/ifcfg-enp0s8
-          TYPE=Ethernet
-          PROXY_METHOD=none
-          BROWSER_ONLY=no
-          BOOTPROTO=static			//고정 ip 설정
-          IPADDR=172.28.128.10
-          NETMASK=255.255.255.0
-          GATEWAY=172.28.128.1
-          DEFROUTE=yes
-          IPV4_FAILURE_FATAL=no
-          IPV6INIT=yes
-          IPV6_AUTOCONF=yes
-          IPV6_DEFROUTE=yes
-          IPV6_FAILURE_FATAL=no
-          IPV6_ADDR_GEN_MODE=stable-privacy
-          NAME=enp0s8
-          UUID=6bbc2ae4-f822-4d90-9328-b07c9ee6e765
-          DEVICE=enp0s8
-          ONBOOT=yes
+          	TYPE=Ethernet
+          	PROXY_METHOD=none
+          	BROWSER_ONLY=no
+          	BOOTPROTO=static			//고정 ip 설정
+          	IPADDR=172.28.128.10
+          	NETMASK=255.255.255.0
+          	GATEWAY=172.28.128.1
+          	DEFROUTE=yes
+          	IPV4_FAILURE_FATAL=no
+          	IPV6INIT=yes
+          	IPV6_AUTOCONF=yes
+          	IPV6_DEFROUTE=yes
+          	IPV6_FAILURE_FATAL=no
+          	IPV6_ADDR_GEN_MODE=stable-privacy
+          	NAME=enp0s8
+          	UUID=6bbc2ae4-f822-4d90-9328-b07c9ee6e765
+          	DEVICE=enp0s8
+          	ONBOOT=yes
+		
           #systemctl restart network
-          1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
-          link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
-              inet 127.0.0.1/8 scope host lo
-          valid_lft forever preferred_lft forever
-              inet6 ::1/128 scope host 
-          valid_lft forever preferred_lft forever
-          2: enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
-          link/ether 08:00:27:34:88:e2 brd ff:ff:ff:ff:ff:ff
-              inet 10.0.2.15/24 brd 10.0.2.255 scope global noprefixroute dynamic enp0s3
-          valid_lft 86389sec preferred_lft 86389sec
-              inet6 fe80::e94a:c781:2840:a4b/64 scope link noprefixroute 
-          valid_lft forever preferred_lft forever
-          3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
-          link/ether 08:00:27:77:ea:af brd ff:ff:ff:ff:ff:ff       
-              inet 172.28.128.10/24 brd 172.28.128.255 scope global noprefixroute enp0s8      //ip주소 부여된 
-          valid_lft forever preferred_lft forever
-              inet6 fe80::9f16:5a10:11ff:589b/64 scope link noprefixroute 
-          valid_lft forever preferred_lft forever
+          	1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+          		link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+              		inet 127.0.0.1/8 scope host lo
+          			valid_lft forever preferred_lft forever
+              		inet6 ::1/128 scope host 
+          			valid_lft forever preferred_lft forever
+          	2: enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+          		link/ether 08:00:27:34:88:e2 brd ff:ff:ff:ff:ff:ff
+              		inet 10.0.2.15/24 brd 10.0.2.255 scope global noprefixroute dynamic enp0s3
+          			valid_lft 86389sec preferred_lft 86389sec
+              		inet6 fe80::e94a:c781:2840:a4b/64 scope link noprefixroute 
+          			valid_lft forever preferred_lft forever
+          	3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+          		link/ether 08:00:27:77:ea:af brd ff:ff:ff:ff:ff:ff       
+              		inet 172.28.128.10/24 brd 172.28.128.255 scope global noprefixroute enp0s8      //ip주소 부여된 
+          			valid_lft forever preferred_lft forever
+              		inet6 fe80::9f16:5a10:11ff:589b/64 scope link noprefixroute 
+          			valid_lft forever preferred_lft forever
           
 #pxe를 위한 사전작업
 --------------------
